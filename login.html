@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>SkyDash-Manager · Iniciar sesión</title>
+  <meta name="description" content="Plataforma de visualización meteorológica georreferenciada." />
+  <meta name="theme-color" content="#f2f2f7" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="auth-body">
+  <script src="/js/theme.js"></script>
+  <main class="auth-shell">
+    <section class="auth-card glass">
+      <div class="auth-brand">
+        <div class="brand-glyph" aria-hidden="true">
+          <span>☀️</span>
+        </div>
+        <h1>SkyDash</h1>
+        <p class="auth-sub">Analítica meteorológica georreferenciada</p>
+      </div>
+
+      <form id="login-form" class="auth-form" novalidate>
+        <label class="field">
+          <span>Usuario</span>
+          <input type="text" id="username" autocomplete="username" required placeholder="demo" />
+        </label>
+        <label class="field">
+          <span>Contraseña</span>
+          <input type="password" id="password" autocomplete="current-password" required placeholder="••••••••" />
+        </label>
+
+        <div class="auth-hint">
+          <span>Credenciales demo:</span> <code>demo</code> / <code>ucab2026</code>
+        </div>
+
+        <button type="submit" id="login-btn" class="btn-primary">
+          <span class="btn-label">Iniciar sesión</span>
+          <span class="spinner" hidden></span>
+        </button>
+
+        <div id="login-error" class="auth-error" role="alert" hidden></div>
+      </form>
+
+      <div class="theme-toggle-wrap">
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Cambiar tema">
+          <span class="theme-toggle-thumb"></span>
+        </button>
+        <span class="theme-toggle-label">Modo color</span>
+      </div>
+    </section>
+  </main>
+  <script src="/js/auth.js"></script>
+  <script src="/js/login.js"></script>
+  <script src="/js/sw-register.js"></script>
+</body>
+</html>
