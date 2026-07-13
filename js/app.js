@@ -111,13 +111,24 @@
   }
 
   function forwardGeocode(q) {
-    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q);
+    // Pedimos varios resultados con detalles de dirección para elegir el mejor
+    // (ciudad/pueblo) en vez de quedarnos con el primero, que a veces es una
+    // calle o número y hace que "no cargue bien" la ubicación buscada.
+    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=5&addressdetails=1&q=' + encodeURIComponent(q);
     return fetch(url, { headers: { 'Accept-Language': 'es' } })
       .then(function (r) { return r.json(); })
       .then(function (arr) {
         if (!arr || !arr.length) return null;
-        var it = arr[0];
-        return { lat: parseFloat(it.lat), lon: parseFloat(it.lon), name: it.display_name.split(',')[0], region: it.display_name };
+        var preferred = ['city', 'town', 'village', 'municipality', 'county', 'state', 'country'];
+        var it = arr.find(function (x) {
+          return x.address && preferred.some(function (k) { return x.address[k]; });
+        }) || arr[0];
+        var a = it.address || {};
+        var name = a.city || a.town || a.village || a.municipality ||
+                   a.county || a.state || a.country ||
+                   (it.display_name ? it.display_name.split(',')[0] : q);
+        var region = [a.state, a.country].filter(Boolean).join(', ') || it.display_name || '';
+        return { lat: parseFloat(it.lat), lon: parseFloat(it.lon), name: name, region: region };
       });
   }
 
@@ -202,15 +213,18 @@
   }
 
   // ---------- Selección de ubicación ----------
-  function selectLocation(lat, lon, presetName) {
-    current = { lat: lat, lon: lon, name: presetName || 'Cargando…', region: '' };
+  function selectLocation(lat, lon, preset) {
+    // preset puede ser string (nombre) u objeto { name, region }
+    var pn = preset && typeof preset === 'object' ? preset.name : preset;
+    var pr = preset && typeof preset === 'object' ? (preset.region || '') : '';
+    current = { lat: lat, lon: lon, name: pn || 'Cargando…', region: pr };
     els.locName.textContent = current.name;
     els.locCoords.textContent = lat.toFixed(3) + ', ' + lon.toFixed(3);
     showLoading(true);
 
     map.flyTo([lat, lon], Math.max(map.getZoom(), 9), { duration: 0.8 });
 
-    var geocodeP = presetName ? Promise.resolve({ name: presetName, region: '' }) : reverseGeocode(lat, lon);
+    var geocodeP = pn ? Promise.resolve({ name: pn, region: pr }) : reverseGeocode(lat, lon);
 
     Promise.all([fetchWeather(lat, lon), geocodeP])
       .then(function (res) {
@@ -243,7 +257,7 @@
     forwardGeocode(q).then(function (r) {
       searchSpinner.hidden = true;
       if (!r) { toast('No se encontró "' + q + '".'); return; }
-      selectLocation(r.lat, r.lon, r.name);
+      selectLocation(r.lat, r.lon, { name: r.name, region: r.region });
     }).catch(function () {
       searchSpinner.hidden = true;
       toast('Error al buscar. Revisa tu conexión.');

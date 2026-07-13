@@ -46,6 +46,11 @@
 
 * { box-sizing: border-box; }
 
+/* El atributo [hidden] debe ganarle siempre a display de utilidades como
+   .spinner (inline-block) o .weather-loading (flex). Sin esto, el spinner
+   se queda visible aunque tenga el atributo hidden. */
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   padding: 0;
