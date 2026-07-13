@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>SkyDash-Manager</title>
+  <meta name="description" content="Mapa interactivo, pronóstico y ubicaciones favoritas." />
+  <meta name="theme-color" content="#f2f2f7" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="app-body">
+  <script src="/js/theme.js"></script>
+
+  <header class="app-header glass">
+    <div class="app-header-left">
+      <div class="brand-glyph small" aria-hidden="true"><span>☀️</span></div>
+      <div>
+        <h1 class="app-title">SkyDash</h1>
+        <p class="app-sub" id="user-greeting">Sesión activa</p>
+      </div>
+    </div>
+
+    <form id="search-form" class="search-wrap" role="search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Buscar ciudad o lugar…" autocomplete="off" />
+      <span id="search-spinner" class="spinner small" hidden></span>
+    </form>
+
+    <div class="app-header-actions">
+      <span id="offline-badge" class="pill offline-pill" hidden>Offline</span>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Cambiar tema">
+        <span class="theme-toggle-thumb"></span>
+      </button>
+      <button id="logout-btn" class="btn-ghost" type="button">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="app-grid">
+    <section class="map-panel">
+      <div id="map" role="application" aria-label="Mapa interactivo"></div>
+      <div class="map-hint glass">Toca el mapa para consultar el clima de esa ubicación.</div>
+    </section>
+
+    <aside class="side-panel">
+      <section class="card glass" id="weather-card">
+        <header class="card-head">
+          <div>
+            <p class="eyebrow">Clima actual</p>
+            <h2 id="loc-name">Selecciona una ubicación</h2>
+            <p class="muted" id="loc-coords">—</p>
+          </div>
+          <button id="fav-btn" class="btn-icon" type="button" aria-label="Guardar como favorito" disabled>
+            <span id="fav-icon">☆</span>
+          </button>
+        </header>
+
+        <div id="weather-loading" class="weather-loading" hidden>
+          <span class="spinner"></span>
+          <span>Consultando Open-Meteo…</span>
+        </div>
+
+        <div id="weather-empty" class="weather-empty">
+          <div class="empty-emoji">🗺️</div>
+          <p>Haz clic en el mapa o busca una ciudad para ver el pronóstico.</p>
+        </div>
+
+        <div id="weather-content" hidden>
+          <div class="current-row">
+            <div class="current-emoji" id="current-emoji">☀️</div>
+            <div class="current-temp">
+              <span id="current-temp">—</span><span class="unit">°C</span>
+            </div>
+          </div>
+          <p class="current-desc" id="current-desc">—</p>
+
+          <div class="stats-grid">
+            <div class="stat">
+              <span class="stat-label">Sensación</span>
+              <span class="stat-value" id="stat-feels">—</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Humedad</span>
+              <span class="stat-value" id="stat-hum">—</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Viento</span>
+              <span class="stat-value" id="stat-wind">—</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Máx / Mín</span>
+              <span class="stat-value" id="stat-mm">—</span>
+            </div>
+          </div>
+
+          <h3 class="section-title">Próximos 7 días</h3>
+          <ul id="forecast-list" class="forecast-list"></ul>
+        </div>
+      </section>
+
+      <section class="card glass" id="favorites-card">
+        <header class="card-head">
+          <div>
+            <p class="eyebrow">Mis ubicaciones</p>
+            <h2>Favoritos</h2>
+          </div>
+          <span class="pill" id="fav-count">0</span>
+        </header>
+        <ul id="fav-list" class="fav-list"></ul>
+        <p id="fav-empty" class="muted small">Aún no tienes ubicaciones guardadas.</p>
+      </section>
+    </aside>
+  </main>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/sw-register.js"></script>
+</body>
+</html>
